@@ -12,3 +12,47 @@ if !  wp config has WP_REDIS_HOST --allow-root ; then
 fi
 wp user create casper casper@example.com --user_pass=755608 --role=contributor --allow-root
 php-fpm7.3 --nodaemonize
+
+***********************************************
+FROM debian:buster
+
+WORKDIR /var/www/html
+RUN apt-get update && apt-get install curl -y \
+	&& curl https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -o /usr/bin/wp \
+	&& chmod +x /usr/bin/wp \
+	&& apt-get install php7.3-common php7.3-fpm php-mysql -y \
+	&& apt-get install mariadb-client -y\
+	&& apt-get install php-redis -y
+COPY conf/www.conf /etc/php/7.3/fpm/pool.d/www.conf
+COPY tools/wpscript.sh /
+
+RUN service php7.3-fpm start && chmod +X /wpscript.sh
+
+EXPOSE 9000
+CMD ["bash", "/wpscript.sh"]
+
+*************************************
+[www]
+
+user = www-data
+group = www-data
+
+listen = 9000
+
+listen.owner = www-data
+listen.group = www-data
+
+pm = dynamic
+pm.max_children = 5
+pm.start_servers = 2
+pm.min_spare_servers = 1
+pm.max_spare_servers = 3
+*************************************
+user 
+domain name
+db name
+db user
+db ps
+wpuser
+wpps
+wp email
