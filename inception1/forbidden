@@ -1,0 +1,4 @@
+network : host --link Links
+container musn't start with a command running an infinite loop
+tail-f
+No passowrd in docker file
